@@ -163,7 +163,20 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    pass
+    sorted_data = sorted (data, key = lambda t: t[1])
+    f = open(filename, "w")
+    header = ["Listing Title", "Cost", "Listing ID", "Policy Number", "Place Type", "Number of Bedrooms"]
+    for x in header[0:-1]:
+        f.write(x + ", ")
+    f.write(header[-1])
+    f.write("\n")
+    for listing in sorted_data:
+        for info in listing[0:-1]:
+            f.write(str(info) + ", ")
+        f.write(str(listing[-1]))
+        f.write("\n")
+    f.close()
+    return None 
 
 
 def check_policy_numbers(data):
@@ -185,7 +198,31 @@ def check_policy_numbers(data):
     ]
 
     """
-    pass
+    policy_lst = []
+    updated = []
+    all_policy_str = ""
+    all_policy = []
+    searching = []
+    incorrect_policy = []
+    listing_ids = []
+    for listing in data:
+        policy_lst.append(listing[3])
+    for policy in policy_lst:
+        if "pending" not in policy.lower():
+            updated.append(policy)
+    for policy in updated:
+        if "license" not in policy.lower():
+            all_policy_str += policy + " "
+            all_policy.append(policy)
+    correct = re.findall("20\d{2}-00\d{4}STR|STR-000\d{4}", all_policy_str)
+    for value in all_policy:
+        if value not in correct:
+            incorrect_policy.append(value)
+    for listing in data:
+        for num in incorrect_policy:
+            if listing[3] == num:
+                listing_ids.append(listing[2])
+    return listing_ids
 
 
 def extra_credit(listing_id):
