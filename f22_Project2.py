@@ -78,7 +78,7 @@ def get_listing_information(listing_id):
     entries_lst = []
     policy = ""
     place_type = ""
-    num_bedrooms = ""
+    num_bedrooms = 0
     current_listing = ""
     
     for entry in entries:
@@ -104,11 +104,12 @@ def get_listing_information(listing_id):
         place_type = "Shared Room"
     else:
         place_type = "Entire Room"
+    
     bed_info = soup.find("ol", class_= "lgx66tx dir dir-ltr")
     bedroom = bed_info.text
     updated_bed = re.findall("\· (\S bedroom|studio|Studio)", bedroom)  
     for info in updated_bed:
-        if info == "studio" or "Studio":
+        if info[0] == "S":
             num_bedrooms = 1
         else:
             num_bedrooms = int(info[0])
@@ -132,7 +133,12 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    pass
+    listings = get_listings_from_search_results(html_file)
+    updated_listings = []
+    for listing in listings:
+        listing_info = get_listing_information(listing[2])
+        updated_listings.append(listing + listing_info)
+    return updated_listings
 
 
 def write_csv(data, filename):
