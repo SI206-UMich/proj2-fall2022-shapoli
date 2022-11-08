@@ -105,16 +105,19 @@ def get_listing_information(listing_id):
     else:
         place_type = "Entire Room"
     
-    bed_info = soup.find("ol", class_= "lgx66tx dir dir-ltr")
-    bedroom = bed_info.text
-    updated_bed = re.findall("\· (\S bedroom|studio|Studio)", bedroom)  
-    for info in updated_bed:
+    bed_info = soup.find_all("li", class_= "l7n4lsf dir dir-ltr")[1]
+    bedroom = bed_info.find_all('span')[2] 
+    for info in bedroom:
         if info[0] == "S":
             num_bedrooms = 1
         else:
             num_bedrooms = int(info[0])
     if policy == "pending":
         policy = "Pending"
+    if "pending" in policy.lower():
+        policy = "Pending"
+    if policy[0] == "L":
+        policy = "Exempt"
     
     room_info = (policy, place_type, num_bedrooms)
     
@@ -213,7 +216,7 @@ def check_policy_numbers(data):
         if "pending" not in policy.lower():
             updated.append(policy)
     for policy in updated:
-        if "license" not in policy.lower():
+        if "exempt" not in policy.lower():
             all_policy_str += policy + " "
             all_policy.append(policy)
     correct = re.findall("20\d{2}-00\d{4}STR|STR-000\d{4}", all_policy_str)
