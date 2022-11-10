@@ -227,6 +227,7 @@ def check_policy_numbers(data):
         for num in incorrect_policy:
             if listing[3] == num:
                 listing_ids.append(listing[2])
+    
     return listing_ids
 
 
